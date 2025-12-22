@@ -1,25 +1,12 @@
-import javax.swing.BorderFactory;
-import javax.swing.JButton;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTextPane;
-import javax.swing.UIManager;
+import javax.swing.*;
 import javax.swing.plaf.metal.MetalButtonUI;
 import javax.swing.text.SimpleAttributeSet;
 import javax.swing.text.StyleConstants;
 import javax.swing.text.StyledDocument;
 
-import java.awt.Graphics;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.util.ArrayList;
-import java.awt.BorderLayout;
-import java.awt.CardLayout;
-import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.FlowLayout;
-import java.awt.Font;
+import java.awt.*;
+import java.awt.event.*;
+import java.util.*;
 /**
  * Class to draw everything in the side panel (shop, info - defenders and attackers, upgrades, cancel)
  */
@@ -88,7 +75,7 @@ public class SidePanel extends JPanel{
     private JPanel defenderScrollPanel, attackerScrollPanel; // scroll panels for the defender and attacker tabs
 
     private ArrayList<DefenderPanel> defenderPanels; // list of panels for defenders to display in scroll pane for defender tab
-    // panels show image, name, cost (for defenders), info button, and buy button (for defenders) TODO create class for this
+    // panels show image, name, cost (for defenders), info button, and buy button (for defenders)
 
     private Defender selected; // selected defender, only for upgrades
 
@@ -188,15 +175,16 @@ public class SidePanel extends JPanel{
         scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
         scrollPane.getVerticalScrollBar().setUnitIncrement(30);
 
+        
         defenderScrollPanel = new JPanel();
-        defenderScrollPanel.setLayout(null);
         defenderScrollPanel.setLocation(0, 0);
-        defenderScrollPanel.setPreferredSize(new Dimension(WIDTH - SCROLL_BAR_WIDTH, (int)(1600 * Coordinator.SIZE_MULTIPLIER)));
+        defenderScrollPanel.setLayout(null);
+        defenderScrollPanel.setPreferredSize(new Dimension(WIDTH - SCROLL_BAR_WIDTH, (int)(9 * DefenderPanel.HEIGHT + 10 * VERTICAL_GAP)));
 
         attackerScrollPanel = new JPanel();
         attackerScrollPanel.setLayout(null);
         attackerScrollPanel.setLocation(0, 0);
-        attackerScrollPanel.setPreferredSize(new Dimension(WIDTH, (int)(1300 * Coordinator.SIZE_MULTIPLIER)));
+        attackerScrollPanel.setPreferredSize(new Dimension(WIDTH, (int)(10 * DefenderPanel.HEIGHT + 11 * VERTICAL_GAP)));
 
         tabsBody = new JPanel();
         tabsBody.setLayout(new BorderLayout());
@@ -451,8 +439,6 @@ public class SidePanel extends JPanel{
         mgt.setBounds(0, OFFSET + DefenderPanel.HEIGHT * 8 + VERTICAL_GAP * 9, DefenderPanel.WIDTH, DefenderPanel.HEIGHT);
         defenderScrollPanel.add(mgt);
         defenderPanels.add(mgt);
-
-        
         
 
         // DefenderPanel dp1 = new DefenderPanel(new TestDefender(null), player);
@@ -482,7 +468,7 @@ public class SidePanel extends JPanel{
             this.name.setFont(LABEL_FONT);
             add(this.name);
 
-            buyButton = new JButton("Buy ($" + defender.getCost() + ")");
+            buyButton = new JButton("<html><p style=\"text-align: center;\">Buy<br>($" + defender.getCost() + ")</p></html>");
             buyButton.setBounds(WIDTH - HEIGHT - (int)(40 * Coordinator.SIZE_MULTIPLIER), 0, HEIGHT + (int)(40 * Coordinator.SIZE_MULTIPLIER), HEIGHT);
             buyButton.setFont(LABEL_FONT);
             buyButton.setBackground(Color.WHITE);

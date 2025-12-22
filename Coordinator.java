@@ -29,9 +29,10 @@ public class Coordinator extends JFrame{
 
     public Coordinator(){
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setBounds((int)(50 * SIZE_MULTIPLIER), (int)(100 * SIZE_MULTIPLIER), (int)(2500 * SIZE_MULTIPLIER), (int)(1200 * SIZE_MULTIPLIER));
+        setSize((int)(2500 * SIZE_MULTIPLIER), (int)(1200 * SIZE_MULTIPLIER));
         setLayout(new BorderLayout());
-        
+        setResizable(false);
+        setLocationRelativeTo(null);
         
         setBackground(Color.WHITE);
 
