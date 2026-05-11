@@ -3,6 +3,8 @@ import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.event.MouseEvent;
+import java.io.*;
+import java.util.Scanner;
 import java.util.ArrayList;
 
 /**
@@ -18,31 +20,51 @@ public class AttackerManager {
 
     static{ // set the pre-determined paths
         ticks = new double[10][10000];
-        double total = 0; // total "distance"
-        double totalTDiff = 0; // total difference in ticks
-        double start = System.currentTimeMillis();
-        double estimate = 10;
-        for(int s = 0; s < speeds.length; s++){
-            double t_last = estimate;
-            double t_next = t_last;
-            total = 0;
-            totalTDiff = 0;
-            for(int i = 0; i < COUNT_LIMIT / speeds[s]; i++){
-                //System.out.println(i);
-                do{
-                    t_last = t_next;
-                    t_next = t_last - numerator(t_last, speeds[s] / 5, i) / integrand(t_last);
-                } while(Math.abs(t_last - t_next) >  0.001 || t_next > t_last);
-                ticks[s][i] = t_next;
-                t_last = t_next + estimate;
-                if(i > 0) {
-                    total += Math.sqrt(Math.pow(f_x(ticks[s][i]) - f_x(ticks[s][i - 1]), 2) + Math.pow(f_y(ticks[s][i]) - f_y(ticks[s][i - 1]), 2));
-                    totalTDiff = ticks[s][i] - ticks[s][i - 1];
+        File file = new File("ticks.txt");
+        if (file.exists()) {
+            try (Scanner scanner = new Scanner(file)) {
+                for(int s = 0; s < speeds.length; s++){
+                    for(int i = 0; i < COUNT_LIMIT / speeds[s]; i++){
+                        ticks[s][i] = scanner.nextDouble();
+                    }
                 }
+            } catch (IOException e) {
+                e.printStackTrace();
             }
-            System.out.println(speeds[s] + ": " + total / (COUNT_LIMIT / speeds[s]) + ", " + totalTDiff / (COUNT_LIMIT / speeds[s]));
         }
-        System.out.println((System.currentTimeMillis() - start) / 1000.0);
+        else {
+            try (PrintWriter writer = new PrintWriter(new FileWriter(file))) {
+                double total = 0; // total "distance"
+                double totalTDiff = 0; // total difference in ticks
+                double start = System.currentTimeMillis();
+                double estimate = 10;
+                for(int s = 0; s < speeds.length; s++){
+                    double t_last = estimate;
+                    double t_next = t_last;
+                    total = 0;
+                    totalTDiff = 0;
+                    for(int i = 0; i < COUNT_LIMIT / speeds[s]; i++){
+                        //System.out.println(i);
+                        do{
+                            t_last = t_next;
+                            t_next = t_last - numerator(t_last, speeds[s] / 5, i) / integrand(t_last);
+                        } while(Math.abs(t_last - t_next) >  0.001 || t_next > t_last);
+                        ticks[s][i] = t_next;
+                        writer.println(ticks[s][i]);
+                        t_last = t_next + estimate;
+                        if(i > 0) {
+                            total += Math.sqrt(Math.pow(f_x(ticks[s][i]) - f_x(ticks[s][i - 1]), 2) + Math.pow(f_y(ticks[s][i]) - f_y(ticks[s][i - 1]), 2));
+                            totalTDiff = ticks[s][i] - ticks[s][i - 1];
+                        }
+                    }
+                    System.out.println(speeds[s] + ": " + total / (COUNT_LIMIT / speeds[s]) + ", " + totalTDiff / (COUNT_LIMIT / speeds[s]));
+                }
+                System.out.println((System.currentTimeMillis() - start) / 1000.0);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        
 
     }
 
@@ -112,14 +134,14 @@ public class AttackerManager {
     /**
      * x position based on tick
      */
-    private static double f_x(double t){
+    public static double f_x(double t){
         return (-0.000017914 * (Math.pow(t, 4)) + 0.00353185 * (Math.pow(t, 3)) - 0.206458 * (Math.pow(t, 2)) + 4.24157 * (t) - 0.0158984) * 17;
     }
 
     /**
      * y position based on tick
      */
-    private static double f_y(double t){
+    public static double f_y(double t){
         return 1200 - ((-0.0000421384 * (Math.pow(t, 4)) + 0.00825601 * (Math.pow(t, 3)) - 0.492829 * (Math.pow(t, 2)) + 8.66422 * (t) + 59.8776) * 11); 
     }
 
@@ -171,10 +193,12 @@ public class AttackerManager {
         double y = e.getY();
         double tickX, tickY;
         for(int i = 0; i < ticks[1].length; i++){
-            tickX = (-0.000017914 * (Math.pow(ticks[1][i], 4)) + 0.00353185 * (Math.pow(ticks[1][i], 3)) - 0.206458 * (Math.pow(ticks[1][i], 2)) +
-                4.24157 * (ticks[1][i]) - 0.0158984) * 17;
-            tickY = 1200 - ((-0.0000421384 * (Math.pow(ticks[1][i], 4)) + 0.00825601 * (Math.pow(ticks[1][i], 3)) - 0.492829 * (Math.pow(ticks[1][i], 2)) +
-                8.66422 * (ticks[1][i]) + 59.8776) * 11);
+            tickX = f_x(ticks[1][i]);
+            /*(-0.000017914 * (Math.pow(ticks[1][i], 4)) + 0.00353185 * (Math.pow(ticks[1][i], 3)) - 0.206458 * (Math.pow(ticks[1][i], 2)) +
+                4.24157 * (ticks[1][i]) - 0.0158984) * 17;*/
+            tickY = f_y(ticks[1][i]);
+            /*1200 - ((-0.0000421384 * (Math.pow(ticks[1][i], 4)) + 0.00825601 * (Math.pow(ticks[1][i], 3)) - 0.492829 * (Math.pow(ticks[1][i], 2)) +
+                8.66422 * (ticks[1][i]) + 59.8776) * 11);*/
             tickX *= Coordinator.SIZE_MULTIPLIER;
             tickY *= Coordinator.SIZE_MULTIPLIER;
             if(Math.sqrt(Math.pow(x - tickX, 2) + Math.pow(y - tickY, 2)) <= radius + 25 * Coordinator.SIZE_MULTIPLIER){
@@ -191,10 +215,12 @@ public class AttackerManager {
         g2.setStroke(new BasicStroke(5, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
         double tickX, tickY;
         for(int i = 0; i < ticks[1].length; i+= 20){
-            tickX = (-0.000017914 * (Math.pow(ticks[1][i], 4)) + 0.00353185 * (Math.pow(ticks[1][i], 3)) - 0.206458 * (Math.pow(ticks[1][i], 2)) +
-                4.24157 * (ticks[1][i]) - 0.0158984) * 17;
-            tickY = 1200 - ((-0.0000421384 * (Math.pow(ticks[1][i], 4)) + 0.00825601 * (Math.pow(ticks[1][i], 3)) - 0.492829 * (Math.pow(ticks[1][i], 2)) +
-                8.66422 * (ticks[1][i]) + 59.8776) * 11);
+            tickX = f_x(ticks[1][i]);
+            /*(-0.000017914 * (Math.pow(ticks[1][i], 4)) + 0.00353185 * (Math.pow(ticks[1][i], 3)) - 0.206458 * (Math.pow(ticks[1][i], 2)) +
+                4.24157 * (ticks[1][i]) - 0.0158984) * 17;*/
+            tickY = f_y(ticks[1][i]);
+            /*1200 - ((-0.0000421384 * (Math.pow(ticks[1][i], 4)) + 0.00825601 * (Math.pow(ticks[1][i], 3)) - 0.492829 * (Math.pow(ticks[1][i], 2)) +
+                8.66422 * (ticks[1][i]) + 59.8776) * 11);*/
             g2.drawOval((int)((tickX - 50) * Coordinator.SIZE_MULTIPLIER), (int)((tickY - 50) * Coordinator.SIZE_MULTIPLIER),
                 (int)(100 * Coordinator.SIZE_MULTIPLIER), (int)(100 * Coordinator.SIZE_MULTIPLIER));
             

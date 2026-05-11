@@ -34,6 +34,6 @@ public class Player {
 
     public void reset(){
         health = 100;
-        money = 20000;
+        money = 200; // default 200
     }
 }

@@ -40,8 +40,10 @@ public class BackgroundPanel extends JPanel{
         double y0 = (59.8776 * 11) * Coordinator.SIZE_MULTIPLIER;
         for (int i = 0; i < nPoints; i++) {
             double t = 130 * i / nPoints;
-            x1 = (-0.000017914 * (Math.pow(t, 4)) + 0.00353185 * (Math.pow(t, 3)) - 0.206458 * (Math.pow(t, 2)) + 4.24157 * (t) - 0.0158984) * 17;
-            y1 = 1200 - ((-0.0000421384 * (Math.pow(t, 4)) + 0.00825601 * (Math.pow(t, 3)) - 0.492829 * (Math.pow(t, 2)) + 8.66422 * (t) + 59.8776) * 11); 
+            //x1 = (-0.000017914 * (Math.pow(t, 4)) + 0.00353185 * (Math.pow(t, 3)) - 0.206458 * (Math.pow(t, 2)) + 4.24157 * (t) - 0.0158984) * 17;
+            //y1 = 1200 - ((-0.0000421384 * (Math.pow(t, 4)) + 0.00825601 * (Math.pow(t, 3)) - 0.492829 * (Math.pow(t, 2)) + 8.66422 * (t) + 59.8776) * 11); 
+            x1 = AttackerManager.f_x(t);
+            y1 = AttackerManager.f_y(t);
             x1 *= Coordinator.SIZE_MULTIPLIER;
             y1 *= Coordinator.SIZE_MULTIPLIER;
             if((x0 > 0 || x1 > 0 )&& x0 != x1 && y0 != y1) {
